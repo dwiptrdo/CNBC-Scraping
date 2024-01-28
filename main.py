@@ -1,5 +1,6 @@
 import requests
 import json
+import os
 from typing import List
 from pyquery import PyQuery
 
@@ -15,6 +16,14 @@ def ambil_link(link_hal): # mendifinisikan fungsi ambil_link dengan parameter (l
 
     return links
 
+def buat_folder(folder): # mendefinisikan fungsi untuk membuat folder
+     if not os.path.exists(folder): #memeriksa folder apakah sudah ada
+          os.makedirs(folder) # membuat folder jika belum ada
+
+
+def text_bersih(bersih): # mendefinisikan fungsi untuk membersihkan text dari karakter yang tidak valid
+     bersih_text = bersih.replace("?", "").replace(" ", "_").replace(",", "").replace("/", "") # membersihkan teks
+     return bersih_text 
 
 def extract(link_web): #mendefinisikan fungsi extract dengan parameter (link_web)
     response = requests.get(link_web)
@@ -34,8 +43,12 @@ def extract(link_web): #mendefinisikan fungsi extract dengan parameter (link_web
         
     }
 
-    with open(f'CNBC/data_sample/{results.get("title").replace("?", "").replace(" ","_").replace(",", "").replace("/", "")}.json', 'w', encoding= "utf-8") as file: # membuka file json
-            json.dump(results, file, ensure_ascii=False, indent=2, default=str) # menulis data kedalam file json
+    folder = "data_sample" # folder untuk menyimpan data
+    buat_folder(folder) # membuat folder jika belum ada
+    title = text_bersih(results.get("title")) 
+    path_file = os.path.join(folder, f'{title}.json') #membuat path file json
+    with open(path_file, 'w', encoding='utf-8') as file: # membuka file json
+        json.dump(results, file, ensure_ascii=False, indent=2, default=str) # menyimpan data ke dalam file json
 
 
 def jalankan(): # mendefinisikan fungsi jalankan
@@ -48,7 +61,7 @@ def jalankan(): # mendefinisikan fungsi jalankan
         for url in linkks: # melakukan iterasi pada link yang diperoleh
             extract(url) # mengekstrak data dari link
             break # berhenti dari loop setelah mengekstrak data dari satu link
-        if halaman == 6: # berhenti setelah mencapai halaman ke-10
+        if halaman == 6: # berhenti setelah mencapai halaman ke-6
             break
 
         

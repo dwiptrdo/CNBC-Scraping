@@ -48,7 +48,7 @@ def jalankan(): # mendefinisikan fungsi jalankan
         for url in linkks: # melakukan iterasi pada link yang diperoleh
             extract(url) # mengekstrak data dari link
             break # berhenti dari loop setelah mengekstrak data dari satu link
-        if halaman == 6: # berhenti setelah mencapai halaman ke-10
+        if halaman == 6: # berhenti setelah mencapai halaman ke-6
             break
 
         

@@ -1,14 +1,56 @@
 import requests
+import json
+from typing import List
 from pyquery import PyQuery
 
-response = requests.get('https://www.cnbcindonesia.com/news/indeks/3/1')
-print(response)
 
-html = PyQuery(response.text)
+def ambil_link(link_hal): # mendifinisikan fungsi ambil_link dengan parameter (link_hal)
+    response = requests.get(link_hal) # mengirim request ke link yang diberikan
+    html = PyQuery(response.text) #parsing teks html dari response
 
-link = html.find('ul[class="list media_rows middle thumb terbaru gtm_indeks_feed"] >li')
-print(link.find('a').attr('href'))
+    links = [] # membuat list kosong untuk menyimpan link
 
-for url in link:
-    print(PyQuery(url).find('a').attr('href'))
+    for a in html.find('div[class="lm_content mt10"] li a'): # looping melalui inspect element untuk menemukan link
+        links.append(PyQuery(a).attr('href')) # menambahkan link kedalam list dengan element html (a) yang memiliki atribut 'href'
 
+    return links
+
+
+def extract(link_web): #mendefinisikan fungsi extract dengan parameter (link_web)
+    response = requests.get(link_web)
+    html = PyQuery(response.text)
+
+    results = { # membuat dictionary 'results' untuk menyimpan hasil ekstraksi
+        "url": [PyQuery(url).attr('href') for url in html.find('head>link[href="https://www.cnbcindonesia.com"]')], # mencari dan menyimpan link kedalam "url"
+        "url_page": [PyQuery(url_page).attr('href') for url_page in html.find('head>link[rel="canonical"]')],
+        "title": html.find('div.jdl div[class="container"] h1').text(),
+        "data": { # membuat sub-dictionary 'data' untuk menyimpan data lainnya
+            "author": html.find('div[class="author"]').text(),
+            "posted": html.find('div[class="date"]').text(),
+            "url_media": [PyQuery(url_media).attr('src') for url_media in html.find('div[class="media_artikel"] img ')],
+            "description": html.find('div[class="detail_text"] p').text(),
+            "tags": [PyQuery(tag).text() for tag in html.find('div[class="trending-tag mt35 mb45 gtm_tag"] a')]
+        }
+        
+    }
+
+    with open(f'CNBC/data_sample/{results.get("title").replace("?", "").replace(" ","_").replace(",", "").replace("/", "")}.json', 'w', encoding= "utf-8") as file: # membuka file json
+            json.dump(results, file, ensure_ascii=False, indent=2, default=str) # menulis data kedalam file json
+
+
+def jalankan(): # mendefinisikan fungsi jalankan
+    link_utama = 'https://www.cnbcindonesia.com/indeks' #link utama
+
+    halaman = 1 
+    while True:
+        halaman += 1 #menambah nilai halaman
+        linkks = ambil_link(f'{link_utama}/{halaman}') # mengambil link dari halaman yang diberikan
+        for url in linkks: # melakukan iterasi pada link yang diperoleh
+            extract(url) # mengekstrak data dari link
+            break # berhenti dari loop setelah mengekstrak data dari satu link
+        if halaman == 6: # berhenti setelah mencapai halaman ke-10
+            break
+
+        
+
+jalankan() # memanggil fungsi jalankan untuk memulai

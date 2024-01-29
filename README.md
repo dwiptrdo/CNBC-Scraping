@@ -1,7 +1,7 @@
 <h1 align="center" >Hello 👋, I'm Alfredo</h1>
 
 
-<h1 align="center" >Welcome To CNBC-Scraping.PY🧣</h1>
+<h1 align="center" >Welcome To CNBC-Scraping</h1>
 
 > Program ini digunakan untuk mengambil data dari website berita CNBC
 

@@ -1,8 +1,8 @@
+from pyquery import PyQuery
+
 import requests
 import json
 import os
-from typing import List
-from pyquery import PyQuery
 
 
 def ambil_link(link_hal): # mendifinisikan fungsi ambil_link dengan parameter (link_hal)
@@ -57,7 +57,7 @@ def jalankan(): # mendefinisikan fungsi jalankan
     halaman = 1 
     while True:
         halaman += 1 #menambah nilai halaman
-        linkks = ambil_link(f'{link_utama}/{halaman}') # mengambil link dari halaman yang diberikan
+        linkks = ambil_link(f'{link_utama}?page={halaman}') # mengambil link dari halaman yang diberikan
         for url in linkks: # melakukan iterasi pada link yang diperoleh
             extract(url) # mengekstrak data dari link
             break # berhenti dari loop setelah mengekstrak data dari satu link

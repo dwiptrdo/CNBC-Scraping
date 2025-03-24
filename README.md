@@ -55,7 +55,7 @@ python main.py
 
 ## Author
 
-👤 **Alfredo Dwi Putra**
+👤 **dwiptrdo**
 
 
 - Github: [@dwiptrdo](https://github.com/dwiptrdo)
